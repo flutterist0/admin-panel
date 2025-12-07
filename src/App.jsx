@@ -15,6 +15,8 @@ import DetailGroupManager from './pages/DetailGroupManager';
 import DetailLinkManager from './pages/DetailLinkManager';
 import DetailManager from './pages/DetailManager';
 import FinalLinkManager from './pages/FinalLinkManager';
+import TagManager from './pages/TagManager';
+import DetailTagManager from './pages/DetailTagManager';
 // Qorunan Yol (Token yoxdursa login-ə atır)
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -57,6 +59,8 @@ function App() {
 <Route path="detail-links" element={<DetailLinkManager />} />
 <Route path="all-details" element={<DetailManager />} />
 <Route path="final-links" element={<FinalLinkManager />} />
+<Route path="tags" element={<TagManager />} />
+<Route path="detail-tags" element={<DetailTagManager />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />

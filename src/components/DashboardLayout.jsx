@@ -10,6 +10,7 @@ import {
   FaLink,
   FaCogs,
   FaBox,
+  FaTags,
 } from "react-icons/fa";
 import authService from "../services/authService";
 
@@ -109,7 +110,15 @@ const DashboardLayout = () => {
             )}`}
           >
             <FaLink /> 4-lü Əlaqələr
+            
+            
           </Link>
+          <Link to="/dashboard/tags" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/tags')}`}>
+    <FaTags /> Etiketlər (Tags)
+</Link>
+<Link to="/dashboard/detail-tags" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/detail-tags')}`}>
+    <FaLink /> Hissə-Tag Əlaqəsi
+</Link>
         </nav>
 
         <div className="p-4 border-t border-gray-800 bg-slate-900">
