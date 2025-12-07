@@ -30,7 +30,7 @@ const detailGroupService = {
         return response.data;
     },
     delete: async (id) => {
-        const response = await axios.post(`${API_URL}/delete?id=${id}`);
+        const response = await axios.delete(`${API_URL}/delete?id=${id}`);
         return response.data;
     }
 };
