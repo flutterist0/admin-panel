@@ -9,66 +9,65 @@ import yearGroupService from '../services/yearGroupService';
 import detailGroupService from '../services/detailGroupService';
 
 const DetailLinkManager = () => {
-    // Siyahılar
     const [links, setLinks] = useState([]);
-    const [models, setModels] = useState([]);
-    const [yearGroups, setYearGroups] = useState([]); // Bu dinamik dəyişəcək
-    const [allYearGroups, setAllYearGroups] = useState([]); // Listdə adları göstərmək üçün hamısını saxlayırıq
+    const [models, setModels] = useState([]); // Buraya diqqət!
+    const [yearGroups, setYearGroups] = useState([]);
     const [detailGroups, setDetailGroups] = useState([]);
     
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Form Seçimləri
+    // Form
     const [selectedModel, setSelectedModel] = useState("");
     const [selectedYearGroup, setSelectedYearGroup] = useState("");
     const [selectedDetailGroup, setSelectedDetailGroup] = useState("");
 
-    // --- 1. SƏHİFƏ AÇILANDA YÜKLƏNƏNLƏR ---
+    // --- DÜZƏLDİLMİŞ FETCH DATA ---
     const fetchData = async () => {
         setLoading(true);
+        
+        // 1. Modelləri gətir (Mütləq gəlməlidir!)
         try {
-            // Modelleri, Bütün İlləri (adları tapmaq üçün) və Hissələri gətiririk
-            const [linksRes, modelsRes, allYearsRes, detailsRes] = await Promise.all([
-                detailLinkService.getAll(),
-                modelService.getAll(),
-                yearGroupService.getAll(),
-                detailGroupService.getAll()
-            ]);
+            const modelsRes = await modelService.getAll();
+            console.log("Gələn Modeller:", modelsRes); // KONSOLA BAX
+            if (modelsRes.success || modelsRes.Success) {
+                setModels(modelsRes.data || modelsRes.Data);
+            } else {
+                console.error("Modeller yüklənmədi:", modelsRes);
+            }
+        } catch (e) { console.error("Model xətası", e); }
 
-            if (linksRes.success || linksRes.Success) setLinks(linksRes.data || linksRes.Data);
-            if (modelsRes.success || modelsRes.Success) setModels(modelsRes.data || modelsRes.Data);
-            if (allYearsRes.success || allYearsRes.Success) setAllYearGroups(allYearsRes.data || allYearsRes.Data); // List üçün
+        // 2. İllər
+        try {
+            const yearsRes = await yearGroupService.getAll();
+            if (yearsRes.success || yearsRes.Success) setYearGroups(yearsRes.data || yearsRes.Data);
+        } catch (e) { console.error("İl xətası", e); }
+
+        // 3. Hissə Qrupları
+        try {
+            const detailsRes = await detailGroupService.getAll();
             if (detailsRes.success || detailsRes.Success) setDetailGroups(detailsRes.data || detailsRes.Data);
+        } catch (e) { console.error("Hissə Qrupu xətası", e); }
 
-        } catch (error) {
-            console.error("Data Load Error", error);
-        }
+        // 4. Mövcud Əlaqələr
+        try {
+            const linksRes = await detailLinkService.getAll();
+            if (linksRes.success || linksRes.Success) setLinks(linksRes.data || linksRes.Data);
+        } catch (e) { console.error("Link xətası", e); }
+
         setLoading(false);
     };
 
     useEffect(() => { fetchData(); }, []);
 
-    // --- 2. MODEL SEÇİLƏNDƏ İŞLƏYƏN FUNKSİYA (CASCADING) ---
+    // --- CASCADING MƏNTİQİ ---
     const handleModelChange = async (e) => {
         const modelId = e.target.value;
         setSelectedModel(modelId);
-        setSelectedYearGroup(""); // Model dəyişəndə ili sıfırla
-        setYearGroups([]); // Dropdown-u boşalt
-
-        if (modelId) {
-            try {
-                // Seçilən modelə aid illəri gətir
-                const res = await yearGroupService.getByModelId(modelId);
-                if (res.success || res.Success) {
-                    setYearGroups(res.data || res.Data);
-                } else {
-                    toast.info("Bu modelə aid il qrupu tapılmadı.");
-                }
-            } catch (error) {
-                console.error("Year load error:", error);
-            }
-        }
+        setSelectedYearGroup(""); 
+        
+        // Burada əlavə olaraq istəsən həmin modelə aid illəri gətirə bilərsən
+        // Amma indiki halda bütün illəri göstəririk
     };
 
     const handleAddSubmit = async (e) => {
@@ -83,36 +82,29 @@ const DetailLinkManager = () => {
             if (res.success || res.Success) {
                 toast.success("Hissə qrupu əlaqələndirildi!");
                 setIsModalOpen(false);
-                // Reset form
                 setSelectedModel("");
                 setSelectedYearGroup("");
                 setSelectedDetailGroup("");
-                setYearGroups([]); // İli də sıfırla
-                
-                // Listi yenilə
-                const newLinks = await detailLinkService.getAll();
-                if(newLinks.success || newLinks.Success) setLinks(newLinks.data || newLinks.Data);
-
+                fetchData();
             } else {
                 toast.error(res.message);
             }
         } catch (error) {
-            toast.error("Xəta baş verdi. Bu əlaqə artıq mövcud ola bilər.");
+            toast.error("Xəta baş verdi. Bu əlaqə mövcud ola bilər.");
         }
     };
 
-    // Helper functions (Adları ID-yə görə tapmaq)
+    // Helper functions
     const getModelName = (id) => {
-        const m = models.find(x => (x.id || x.Id) === id);
+        const m = models.find(x => (x.id || x.Id) == id); // == istifadə edirik (string/number fərqi olmasın)
         return m ? (m.name || m.Name) : `ID: ${id}`;
     };
     const getYearRange = (id) => {
-        // Listdə göstərərkən "allYearGroups" istifadə edirik ki, hamısını tapa bilsin
-        const yg = allYearGroups.find(x => (x.id || x.Id) === id);
+        const yg = yearGroups.find(x => (x.id || x.Id) == id);
         return yg ? `${yg.from || yg.From}-${yg.to || yg.To}` : `ID: ${id}`;
     };
     const getDetailGroupName = (id) => {
-        const dg = detailGroups.find(x => (x.id || x.Id) === id);
+        const dg = detailGroups.find(x => (x.id || x.Id) == id);
         return dg ? (dg.name || dg.Name) : `ID: ${id}`;
     };
 
@@ -175,13 +167,14 @@ const DetailLinkManager = () => {
                                         <FaCar className="absolute top-3.5 left-3 text-gray-400" />
                                         <select 
                                             value={selectedModel} 
-                                            onChange={handleModelChange} // Dəyişdirildi: Xüsusi funksiya çağırılır
+                                            onChange={handleModelChange} 
                                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer appearance-none"
                                             required
                                         >
-                                            <option value="" className="text-gray-500">Model seçin...</option>
+                                            <option value="" className="text-gray-500">Seçin...</option>
+                                            {/* Modeller burada listelenir */}
                                             {models.map(m => (
-                                                <option key={m.id||m.Id} value={m.id||m.Id} className="text-gray-900 bg-white py-2">
+                                                <option key={m.id||m.Id} value={m.id||m.Id} className="text-gray-900">
                                                     {m.name||m.Name}
                                                 </option>
                                             ))}
@@ -189,7 +182,7 @@ const DetailLinkManager = () => {
                                     </div>
                                 </div>
 
-                                {/* 2. Year Select (Dinamik Dolur) */}
+                                {/* 2. Year Select */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">İl Aralığı</label>
                                     <div className="relative">
@@ -199,14 +192,10 @@ const DetailLinkManager = () => {
                                             onChange={(e) => setSelectedYearGroup(e.target.value)} 
                                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer appearance-none"
                                             required
-                                            disabled={!selectedModel} // Model seçilməyibsə deaktiv olur
                                         >
-                                            <option value="" className="text-gray-500">
-                                                {!selectedModel ? "Əvvəlcə Model seçin" : "İl seçin..."}
-                                            </option>
-                                            {/* Burada yalnız seçilmiş modelə aid illər gəlir */}
+                                            <option value="" className="text-gray-500">Seçin...</option>
                                             {yearGroups.map(yg => (
-                                                <option key={yg.id||yg.Id} value={yg.id||yg.Id} className="text-gray-900 bg-white py-2">
+                                                <option key={yg.id||yg.Id} value={yg.id||yg.Id} className="text-gray-900">
                                                     {yg.from||yg.From} - {yg.to||yg.To}
                                                 </option>
                                             ))}
@@ -214,7 +203,7 @@ const DetailLinkManager = () => {
                                     </div>
                                 </div>
 
-                                {/* 3. Detail Group Select (Bütün siyahı) */}
+                                {/* 3. Detail Group Select */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Hissə Qrupu</label>
                                     <div className="relative">
@@ -225,9 +214,9 @@ const DetailLinkManager = () => {
                                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer appearance-none"
                                             required
                                         >
-                                            <option value="" className="text-gray-500">Hissə Qrupu seçin...</option>
+                                            <option value="" className="text-gray-500">Seçin...</option>
                                             {detailGroups.map(dg => (
-                                                <option key={dg.id||dg.Id} value={dg.id||dg.Id} className="text-gray-900 bg-white py-2">
+                                                <option key={dg.id||dg.Id} value={dg.id||dg.Id} className="text-gray-900">
                                                     {dg.name||dg.Name}
                                                 </option>
                                             ))}
