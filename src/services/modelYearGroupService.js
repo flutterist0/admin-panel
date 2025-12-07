@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = "/api/ModelYearGroup";
+// const API_URL = "/api/ModelYearGroup";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/ModelYearGroup`;
 
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem("token");

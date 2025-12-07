@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode"; // Tokeni oxumaq üçün
+import { jwtDecode } from "jwt-decode";
 
-const API_URL = "/api/Auth"; // Senin portun
+const API_URL = `${import.meta.env.VITE_API_URL}/api/Auth`;
 
-// Axios interceptor: Hər sorğuya Tokeni əlavə edir
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -14,11 +13,12 @@ axios.interceptors.request.use(config => {
 
 const authService = {
     login: async (loginDto) => {
-        // Backend: [HttpPost("admin/login")]
         const response = await axios.post(`${API_URL}/admin/login`, loginDto);
+        
         if (response.data.token) {
-            localStorage.setItem("token", response.data.token); // Tokeni yaddaşa yazırıq
+            localStorage.setItem("token", response.data.token);
         }
+
         return response.data;
     },
 
@@ -31,7 +31,7 @@ const authService = {
         try {
             const token = localStorage.getItem("token");
             return token ? jwtDecode(token) : null;
-        } catch (error) {
+        } catch {
             return null;
         }
     }
