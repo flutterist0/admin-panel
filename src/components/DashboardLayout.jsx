@@ -11,6 +11,9 @@ import {
   FaCogs,
   FaBox,
   FaTags,
+  FaUsers,
+  FaChartBar,
+  FaHistory,
 } from "react-icons/fa";
 import authService from "../services/authService";
 
@@ -46,6 +49,14 @@ const DashboardLayout = () => {
             )}`}
           >
             <FaHome /> Ana Səhifə
+          </Link>
+          <Link
+            to="/dashboard/users"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive(
+              "/dashboard/users"
+            )}`}
+          >
+            <FaUsers /> İstifadəçilər
           </Link>
           <Link
             to="/dashboard/brands"
@@ -110,14 +121,31 @@ const DashboardLayout = () => {
             )}`}
           >
             <FaLink /> 4-lü Əlaqələr
-            
-            
           </Link>
-          <Link to="/dashboard/tags" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/tags')}`}>
-    <FaTags /> Etiketlər (Tags)
+          <Link
+            to="/dashboard/tags"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive(
+              "/dashboard/tags"
+            )}`}
+          >
+            <FaTags /> Etiketlər (Tags)
+          </Link>
+          <Link
+            to="/dashboard/detail-tags"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive(
+              "/dashboard/detail-tags"
+            )}`}
+          >
+            <FaLink /> Hissə-Tag Əlaqəsi
+          </Link>
+          <Link to="/dashboard/promocodes" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/promocodes')}`}>
+    <FaTags /> Promokodlar
 </Link>
-<Link to="/dashboard/detail-tags" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/detail-tags')}`}>
-    <FaLink /> Hissə-Tag Əlaqəsi
+          <Link to="/dashboard/promo-stats" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/promo-stats')}`}>
+    <FaChartBar /> Promo Analitika
+</Link>
+<Link to="/dashboard/promo-history" className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${isActive('/dashboard/promo-history')}`}>
+    <FaHistory /> Promo Tarixçəsi
 </Link>
         </nav>
 

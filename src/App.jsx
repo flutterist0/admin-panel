@@ -17,6 +17,10 @@ import DetailManager from './pages/DetailManager';
 import FinalLinkManager from './pages/FinalLinkManager';
 import TagManager from './pages/TagManager';
 import DetailTagManager from './pages/DetailTagManager';
+import UserManager from './pages/UserManager';
+import PromocodeStats from './pages/PromocodeStats';
+import PromocodeHistory from './pages/PromocodeHistory';
+import PromocodeManager from './pages/PromocodeManager';
 // Qorunan Yol (Token yoxdursa login-ə atır)
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -61,6 +65,10 @@ function App() {
 <Route path="final-links" element={<FinalLinkManager />} />
 <Route path="tags" element={<TagManager />} />
 <Route path="detail-tags" element={<DetailTagManager />} />
+<Route path="users" element={<UserManager />} />
+<Route path="promo-stats" element={<PromocodeStats />} />
+<Route path="promo-history" element={<PromocodeHistory />} />
+<Route path="promocodes" element={<PromocodeManager />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />
