@@ -14,7 +14,10 @@ const brandService = {
             throw error;
         }
     },
-
+update: async (id, brandDto) => {
+        const response = await axios.put(`${API_URL}?id=${id}`, brandDto);
+        return response.data;
+    },
     // Yeni brend əlavə et
     add: async (brandDto) => {
         try {
