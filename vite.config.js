@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://test.admin.detal10.az', // Backend ünvanı
+        target: 'https://test.api.detal10.az', // Backend ünvanı
         changeOrigin: true,
         secure: false,
       }
