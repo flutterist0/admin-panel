@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/DiscountPromocode`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/DiscountPromocode`;
 // const API_URL = "/api/DiscountPromocode";
 
 axios.interceptors.request.use(config => {

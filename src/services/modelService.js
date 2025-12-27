@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // const API_URL = "/api/Model"; // Portu özünə uyğun yoxla
-const API_URL = `${import.meta.env.VITE_API_URL}/api/Model`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/Model`;
 
 // Axios interceptor (Token üçün - əgər authService-də qlobal yazmamısansa burda da olmalıdır)
 axios.interceptors.request.use(config => {

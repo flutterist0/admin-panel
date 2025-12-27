@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/Auth`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/Auth`;
 // const API_URL = "/api/Auth"; 
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem("token");

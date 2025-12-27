@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Backend Controller adını yoxla: AuthController-dirsə "api/Auth", UsersController-dirsə "api/Users" yaz.
-const API_URL = `${import.meta.env.VITE_API_URL}/api/Auth`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/Auth`;
 // const API_URL = "/api/Auth"; // Portu özünə uyğun yoxla
 
 axios.interceptors.request.use(config => {
